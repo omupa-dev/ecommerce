@@ -1,4 +1,4 @@
-package livraria;
+package ecommerce;
 
 import java.math.BigDecimal;
 
@@ -16,16 +16,7 @@ public class Livro extends Produto {
     }
 
     public void exibirInformacoes() {
-        System.out.println(titulo + " " + anoLancamento);
-    }
-
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+        System.out.println(getTitulo() + " " + anoLancamento);
     }
 
     public Integer getAnoLancamento() {
@@ -39,8 +30,7 @@ public class Livro extends Produto {
     @Override
     public String toString() {
         return "Livro{" +
-                "titulo='" + titulo + '\'' +
-                ", anoLancamento=" + anoLancamento +
+                "anoLancamento=" + anoLancamento +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package livraria;
+package ecommerce;
 
 import java.math.BigDecimal;
 

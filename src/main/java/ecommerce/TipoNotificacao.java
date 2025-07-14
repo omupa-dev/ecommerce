@@ -1,4 +1,4 @@
-package livraria;
+package ecommerce;
 
 public enum TipoNotificacao {
     SMS,

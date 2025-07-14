@@ -1,4 +1,4 @@
-package livraria;
+package ecommerce;
 
 public class NotificarViaSms implements Notificacao {
 
