@@ -1,6 +1,9 @@
 package com.omupadev.comercioeletronico.apis;
 
 import com.omupadev.comercioeletronico.entity.Produto;
+import com.omupadev.comercioeletronico.repository.EstoqueRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,32 +12,35 @@ import java.util.List;
 @RequestMapping("/estoque")
 public class EstoqueApi {
 
-    /*
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final EstoqueRepository estoqueRepository;
 
     public EstoqueApi(EstoqueRepository estoqueRepository) {
         this.estoqueRepository = estoqueRepository;
     }
-    */
 
     @PostMapping
     public void inserirProduto(@RequestBody Produto produto) {
-        System.out.println("Inserindo o produto=" + produto);
+        logger.debug("Inserindo o produto={}", produto);
+        estoqueRepository.inserirItem(produto);
     }
 
-    @PutMapping("/{idProduto}")
-    public void atualizarProduto(@PathVariable String idProduto) {
-        System.out.println("Atualizando o produto de id=" + idProduto);
+    @PutMapping
+    public void atualizarProduto(@RequestBody Produto produto) {
+        logger.info("Atualizando o produto de id={}", produto.getId());
+        estoqueRepository.atualizar(produto);
     }
 
     @GetMapping
     public List<Produto> listarTodos() {
-        System.out.println("Listando todos os produtos");
-        return null;
+        logger.info("Listando todos os produtos");
+        return estoqueRepository.listarProdutos();
     }
 
     @DeleteMapping("/{idProduto}")
     public void deletarProduto(@PathVariable String idProduto) {
-        System.out.println("Deletando o produto de id=" + idProduto);
+        logger.info("Deletando o produto de id={}", idProduto);
+        estoqueRepository.deletar(idProduto);
     }
 }

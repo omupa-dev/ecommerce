@@ -4,20 +4,26 @@ import java.math.BigDecimal;
 
 public class Produto {
 
+    private String id;
     private String titulo;
     private String descricao;
     private BigDecimal preco;
     private Integer qtdEstoque;
 
-    public Produto(String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
+    public Produto(String id, String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.preco = preco;
         this.qtdEstoque = qtdEstoque;
     }
 
-    public void removerItens(Integer quantidade) {
-        this.qtdEstoque -= quantidade;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitulo() {
@@ -55,7 +61,8 @@ public class Produto {
     @Override
     public String toString() {
         return "Produto{" +
-                "titulo='" + titulo + '\'' +
+                "id='" + id + '\'' +
+                ", titulo='" + titulo + '\'' +
                 ", descricao='" + descricao + '\'' +
                 ", preco=" + preco +
                 ", qtdEstoque=" + qtdEstoque +

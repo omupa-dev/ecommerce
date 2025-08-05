@@ -1,15 +1,17 @@
 package com.omupadev.comercioeletronico.repository;
 
 import com.omupadev.comercioeletronico.entity.Produto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// DAO: Data Access Object
-
 @Repository
 public class EstoqueRepository {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final List<Produto> estoque = new ArrayList<>();
 
@@ -17,9 +19,9 @@ public class EstoqueRepository {
         return estoque;
     }
 
-    public Produto consultarEstoque(String titulo) {
+    public Produto consultarEstoque(String idProduto) {
         for (Produto produto : estoque) {
-            if (produto.getTitulo().equals(titulo)) {
+            if (produto.getId().equals(idProduto)) {
                 return produto;
             }
         }
@@ -28,6 +30,27 @@ public class EstoqueRepository {
 
     public void inserirItem(Produto produto) {
         estoque.add(produto);
+    }
+
+    public void deletar(String idProduto) {
+        estoque.removeIf(produto -> produto.getId().equals(idProduto));
+    }
+
+    public void atualizar(Produto produto) {
+        logger.info("Atualizando o produto de id={}", produto.getId());
+        logger.debug("Atualizando o produto={}", produto);
+
+        Produto produtoEncontrado = consultarEstoque(produto.getId());
+
+        if (produtoEncontrado == null) {
+            logger.error("Nao encontrado para atualizacao o produto={}", produto);
+            return;
+        }
+
+        produtoEncontrado.setDescricao(produto.getDescricao());
+        produtoEncontrado.setPreco(produto.getPreco());
+        produtoEncontrado.setTitulo(produto.getTitulo());
+        produtoEncontrado.setQtdEstoque(produto.getQtdEstoque());
     }
 
     public Integer contarItens(String titulo) {
@@ -42,15 +65,6 @@ public class EstoqueRepository {
 
     public Integer totalItens() {
         return estoque.size();
-    }
-
-    public void removerUmExemplar(Produto produto) {
-        Produto produtoEncontrado = consultarEstoque(produto.getTitulo());
-
-        if (produtoEncontrado == null)
-            return;
-
-        produtoEncontrado.removerItens(1);
     }
 
     public void zerarEstoqueDeUmTitulo(Produto produto) {
