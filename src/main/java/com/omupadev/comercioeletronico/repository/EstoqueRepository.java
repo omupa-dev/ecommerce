@@ -1,6 +1,7 @@
 package com.omupadev.comercioeletronico.repository;
 
 import com.omupadev.comercioeletronico.entity.Produto;
+import com.omupadev.comercioeletronico.exception.ProdutoNaoEncontradoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -43,8 +44,9 @@ public class EstoqueRepository {
         Produto produtoEncontrado = consultarEstoque(produto.getId());
 
         if (produtoEncontrado == null) {
-            logger.error("Nao encontrado para atualizacao o produto={}", produto);
-            return;
+            var errMsg = "Nao encontrado para atualizacao o produto=" + produto;
+            logger.error(errMsg);
+            throw new ProdutoNaoEncontradoException(errMsg, "CODIGO_PERSONALIZADO");
         }
 
         produtoEncontrado.setDescricao(produto.getDescricao());
