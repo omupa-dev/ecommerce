@@ -1,16 +1,11 @@
 package com.omupadev.comercioeletronico.exception;
 
-public class ProdutoNaoEncontradoException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-    private final String codigo;
+public class ProdutoNaoEncontradoException extends ApplicationException {
 
     public ProdutoNaoEncontradoException(String mensagem, String codigo) {
-        super(mensagem);
-        this.codigo = codigo;
-    }
-
-    public String getCodigo() {
-        return codigo;
+        super(mensagem, codigo, HttpStatus.NOT_FOUND);
     }
 
 }
