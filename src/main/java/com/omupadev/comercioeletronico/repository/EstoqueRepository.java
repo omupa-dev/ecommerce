@@ -21,12 +21,10 @@ public class EstoqueRepository {
     }
 
     public Produto consultarEstoque(String idProduto) {
-        for (Produto produto : estoque) {
-            if (produto.getId().equals(idProduto)) {
-                return produto;
-            }
-        }
-        return null;
+        return estoque.stream()
+                .filter(produto -> produto.getId().equals(idProduto))
+                .findFirst()
+                .orElse(null);
     }
 
     public void inserirItem(Produto produto) {
