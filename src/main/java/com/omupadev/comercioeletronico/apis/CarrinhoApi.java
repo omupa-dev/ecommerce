@@ -24,11 +24,26 @@ public class CarrinhoApi {
         return carrinhoService.listarTodos();
     }
 
+    @GetMapping("/{idCliente}")
+    @ResponseStatus(HttpStatus.OK)
+    public Carrinho consultarCarrinho(@PathVariable Long idCliente) {
+        return carrinhoService.consultarCarrinho(idCliente);
+    }
+
     @PostMapping("/{idCliente}")
     public void adicionarNoCarrinho(
             @PathVariable Long idCliente,
             @RequestBody Produto produto
     ) {
         carrinhoService.adicionarNoCarrinho(idCliente, produto);
+    }
+
+    @DeleteMapping("/{idCliente}/produtos/{idProduto}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removerDoCarrinho(
+            @PathVariable Long idCliente,
+            @PathVariable String idProduto
+    ) {
+        carrinhoService.removerDoCarrinho(idCliente, idProduto);
     }
 }

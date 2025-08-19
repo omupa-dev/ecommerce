@@ -28,4 +28,12 @@ public class CarrinhoRepository {
     public Set<Carrinho> listarTodos() {
         return carrinhos;
     }
+
+    public void removerDoCarrinho(Long idCliente, String idProduto) {
+        Carrinho carrinhoEncontrado = consultarCarrinho(idCliente);
+
+        carrinhoEncontrado.getProdutos()
+                .removeIf(produto -> produto.getId().equals(idProduto));
+
+    }
 }
