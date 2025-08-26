@@ -1,10 +1,12 @@
 package com.omupadev.comercioeletronico.entity;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Carrinho {
 
+    private final Long id = new Random().nextLong();
     private Cliente cliente;
     private Set<Produto> produtos = new HashSet<>();
 
@@ -20,6 +22,10 @@ public class Carrinho {
         return cliente.getId().equals(idCliente);
     }
 
+    public void limparCarrinho() {
+        this.produtos = new HashSet<>();
+    }
+
     public Cliente getCliente() {
         return cliente;
     }
@@ -32,10 +38,15 @@ public class Carrinho {
         return produtos;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Carrinho{" +
-                "cliente=" + cliente +
+                "id=" + id +
+                ", cliente=" + cliente +
                 ", produtos=" + produtos +
                 '}';
     }

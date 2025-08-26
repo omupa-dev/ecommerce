@@ -10,6 +10,7 @@ import com.omupadev.comercioeletronico.repository.EstoqueRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Service
@@ -75,5 +76,16 @@ public class CarrinhoService {
 
     public void removerDoCarrinho(Long idCliente, String idProduto) {
         carrinhoRepository.removerDoCarrinho(idCliente, idProduto);
+    }
+
+    public BigDecimal valorTotalCarrinho(Long idCliente) {
+        Carrinho carrinho = this.consultarCarrinho(idCliente);
+        BigDecimal valorTotal = BigDecimal.ZERO;
+
+        for (Produto produto : carrinho.getProdutos()) {
+            valorTotal = valorTotal.add(produto.getPreco());
+        }
+
+        return valorTotal;
     }
 }

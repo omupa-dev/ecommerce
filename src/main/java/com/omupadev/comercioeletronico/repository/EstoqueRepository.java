@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class EstoqueRepository {
@@ -51,6 +52,19 @@ public class EstoqueRepository {
         produtoEncontrado.setPreco(produto.getPreco());
         produtoEncontrado.setTitulo(produto.getTitulo());
         produtoEncontrado.setQtdEstoque(produto.getQtdEstoque());
+    }
+
+    public void darBaixaNosProdutos(Set<Produto> produtosParaDarBaixa) {
+        for (Produto produto : produtosParaDarBaixa) {
+            Produto produtoEncontrado = consultarEstoque(produto.getId());
+
+            if (produtoEncontrado == null) {
+                throw new RuntimeException("Produto não disponível para venda idProduto=" + produto.getId());
+            }
+
+            // TODO: Problema de transação que será resolvido pelo banco de dados ACID
+            deletar(produto.getId());
+        }
     }
 
     public Integer contarItens(String titulo) {
