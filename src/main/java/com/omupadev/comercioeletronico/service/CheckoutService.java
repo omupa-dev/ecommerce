@@ -27,6 +27,9 @@ public class CheckoutService {
     }
 
     public void fecharCompra(Long idCliente) {
+        final Carrinho carrinho = this.carrinhoService.consultarCarrinho(idCliente);
+        this.validaExistenciaProdutosNoCarrinho(idCliente, carrinho);
+
         final BigDecimal valorTotal = this.carrinhoService.valorTotalCarrinho(idCliente);
         final String idDoPagamento = this.pagamentoService.solicitarPagamento(valorTotal, idCliente);
 
@@ -36,10 +39,17 @@ public class CheckoutService {
                     "ERRO_PAGAMENTO",
                     HttpStatus.PRECONDITION_FAILED);
         }
-
-        final Carrinho carrinho = this.carrinhoService.consultarCarrinho(idCliente);
         this.estoqueRepository.darBaixaNosProdutos(carrinho.getProdutos());
         this.envioService.enviarProdutos(carrinho.getId());
         carrinho.limparCarrinho();
+    }
+
+    private void validaExistenciaProdutosNoCarrinho(Long idCliente, Carrinho carrinho) {
+        if (carrinho == null || carrinho.getProdutos().isEmpty()) {
+            throw new ApplicationException(
+                    "Erro no pagamento carrinho vazio idCliente=" + idCliente,
+                    "ERRO_CARRINHO_VAZIO",
+                    HttpStatus.PRECONDITION_FAILED);
+        }
     }
 }

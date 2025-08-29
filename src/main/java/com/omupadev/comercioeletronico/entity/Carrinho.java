@@ -4,13 +4,13 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class Carrinho {
+public class Carrinho extends Identificadora {
 
-    private final Long id = new Random().nextLong();
     private Cliente cliente;
     private Set<Produto> produtos = new HashSet<>();
 
     public Carrinho(Cliente cliente) {
+        super(new Random().nextLong());
         this.cliente = cliente;
     }
 
@@ -38,14 +38,9 @@ public class Carrinho {
         return produtos;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         return "Carrinho{" +
-                "id=" + id +
                 ", cliente=" + cliente +
                 ", produtos=" + produtos +
                 '}';

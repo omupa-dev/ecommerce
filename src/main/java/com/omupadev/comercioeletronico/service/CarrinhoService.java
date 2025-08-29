@@ -35,19 +35,19 @@ public class CarrinhoService {
     }
 
     public Carrinho consultarCarrinho(Long idCliente) {
-        return carrinhoRepository.consultarCarrinho(idCliente);
+        return carrinhoRepository.consultarCarrinhoPorIdCliente(idCliente);
     }
 
     public void adicionarNoCarrinho(Long idCliente, Produto produto) {
         validarExistenciaDoProduto(produto);
 
-        Carrinho carrinhoDoCliente = carrinhoRepository.consultarCarrinho(idCliente);
+        Carrinho carrinhoDoCliente = carrinhoRepository.consultarCarrinhoPorIdCliente(idCliente);
         if (carrinhoDoCliente == null) {
             carrinhoDoCliente = criarCarrinhoParaCliente(idCliente);
         }
 
         carrinhoDoCliente.adicionarProduto(produto);
-        carrinhoRepository.adicionarNoCarrinho(carrinhoDoCliente);
+        carrinhoRepository.adicionar(carrinhoDoCliente);
     }
 
     private void validarExistenciaDoProduto(Produto produto) {

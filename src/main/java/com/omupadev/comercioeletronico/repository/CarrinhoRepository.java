@@ -3,20 +3,11 @@ package com.omupadev.comercioeletronico.repository;
 import com.omupadev.comercioeletronico.entity.Carrinho;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Repository
-public class CarrinhoRepository {
+public class CarrinhoRepository extends ReutilizavelRepository<Carrinho> {
 
-    private final Set<Carrinho> carrinhos = new HashSet<>();
-
-    public void adicionarNoCarrinho(Carrinho carrinho) {
-        carrinhos.add(carrinho);
-    }
-
-    public Carrinho consultarCarrinho(Long idCliente) {
-        for (Carrinho carrinho : carrinhos) {
+    public Carrinho consultarCarrinhoPorIdCliente(Long idCliente) {
+        for (Carrinho carrinho : dados) {
             if (carrinho.ehDoCliente(idCliente)) {
                 return carrinho;
             }
@@ -25,12 +16,8 @@ public class CarrinhoRepository {
         return null;
     }
 
-    public Set<Carrinho> listarTodos() {
-        return carrinhos;
-    }
-
     public void removerDoCarrinho(Long idCliente, String idProduto) {
-        Carrinho carrinhoEncontrado = consultarCarrinho(idCliente);
+        Carrinho carrinhoEncontrado = consultarCarrinhoPorIdCliente(idCliente);
 
         carrinhoEncontrado.getProdutos()
                 .removeIf(produto -> produto.getId().equals(idProduto));

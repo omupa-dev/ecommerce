@@ -6,16 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 @Repository
-public class ClienteRepository {
+public class ClienteRepository extends ReutilizavelRepository<Cliente> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final Set<Cliente> clientes = new HashSet<>();
 
     public void inserir(Cliente cliente) {
         logger.info("Inserindo cliente");
@@ -27,32 +23,17 @@ public class ClienteRepository {
         }
 
         cliente.setId(new Random().nextLong());
-        clientes.add(cliente);
+        adicionar(cliente);
     }
 
     private Cliente consultarPorEmail(String email) {
-        for (Cliente cliente : clientes) {
+        for (Cliente cliente : dados) {
             if (cliente.getEmail().equals(email)) {
                 return cliente;
             }
         }
 
         throw new ClienteNaoEncontradoException("Cliente não encontrado para o email=" + email);
-    }
-
-    public Cliente consultarPorId(Long id) {
-        for (Cliente cliente : clientes) {
-            if (cliente.getId().equals(id)) {
-                return cliente;
-            }
-        }
-
-        throw new ClienteNaoEncontradoException("Cliente não encontrado para o id=" + id);
-    }
-
-    public Set<Cliente> listarTodos() {
-        logger.info("Listando clientes");
-        return clientes;
     }
 
 }

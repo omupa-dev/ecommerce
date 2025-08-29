@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/checkout")
+@RequestMapping("/checkouts")
 public class CheckoutApi {
 
     private final CheckoutService checkoutService;
@@ -16,7 +16,7 @@ public class CheckoutApi {
         this.checkoutService = checkoutService;
     }
 
-    @PostMapping("/cliente/{idCliente}")
+    @PostMapping("/clientes/{idCliente}")
     public void fecharCompra(@PathVariable Long idCliente) {
         this.checkoutService.fecharCompra(idCliente);
     }
