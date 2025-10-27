@@ -1,16 +1,31 @@
 package com.omupadev.comercioeletronico.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.math.BigDecimal;
 
+@Entity
+@Table(name = "produtos")
 public class Produto {
 
-    private String id;
+    @Id
+    @Column(name = "id_produto")
+    private Integer id;
+
     private String titulo;
     private String descricao;
     private BigDecimal preco;
+
+    @Column(name = "qtd_estoque")
     private Integer qtdEstoque;
 
-    public Produto(String id, String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
+    public Produto() {
+    }
+
+    public Produto(Integer id, String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -18,11 +33,11 @@ public class Produto {
         this.qtdEstoque = qtdEstoque;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

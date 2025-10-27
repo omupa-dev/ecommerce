@@ -2,6 +2,7 @@ package com.omupadev.comercioeletronico.apis;
 
 import com.omupadev.comercioeletronico.entity.Produto;
 import com.omupadev.comercioeletronico.repository.EstoqueRepository;
+import com.omupadev.comercioeletronico.repository.ProdutoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,17 @@ public class EstoqueApi {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final EstoqueRepository estoqueRepository;
+    private final ProdutoRepository produtoRepository;
 
-    public EstoqueApi(EstoqueRepository estoqueRepository) {
+    public EstoqueApi(EstoqueRepository estoqueRepository, ProdutoRepository produtoRepository) {
         this.estoqueRepository = estoqueRepository;
+        this.produtoRepository = produtoRepository;
     }
 
     @PostMapping
     public void inserirProduto(@RequestBody Produto produto) {
         logger.debug("Inserindo o produto={}", produto);
+        produtoRepository.save(produto);
         estoqueRepository.inserirItem(produto);
     }
 

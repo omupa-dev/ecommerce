@@ -1,7 +1,6 @@
 package com.omupadev.comercioeletronico.repository;
 
 import com.omupadev.comercioeletronico.entity.Produto;
-import com.omupadev.comercioeletronico.exception.ProdutoNaoEncontradoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -39,7 +38,7 @@ public class EstoqueRepository {
     public void atualizar(Produto produto) {
         logger.info("Atualizando o produto de id={}", produto.getId());
         logger.debug("Atualizando o produto={}", produto);
-
+/*
         Produto produtoEncontrado = consultarEstoque(produto.getId());
 
         if (produtoEncontrado == null) {
@@ -52,9 +51,12 @@ public class EstoqueRepository {
         produtoEncontrado.setPreco(produto.getPreco());
         produtoEncontrado.setTitulo(produto.getTitulo());
         produtoEncontrado.setQtdEstoque(produto.getQtdEstoque());
+
+ */
     }
 
     public void darBaixaNosProdutos(Set<Produto> produtosParaDarBaixa) {
+        /*
         for (Produto produto : produtosParaDarBaixa) {
             Produto produtoEncontrado = consultarEstoque(produto.getId());
 
@@ -65,6 +67,7 @@ public class EstoqueRepository {
             // TODO: Problema de transação que será resolvido pelo banco de dados ACID
             deletar(produto.getId());
         }
+         */
     }
 
     public Integer contarItens(String titulo) {

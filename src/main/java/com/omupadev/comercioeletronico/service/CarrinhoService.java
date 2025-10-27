@@ -51,6 +51,7 @@ public class CarrinhoService {
     }
 
     private void validarExistenciaDoProduto(Produto produto) {
+        /*
         Produto produtoEncontrado = estoqueRepository.consultarEstoque(produto.getId());
 
         if (produtoEncontrado == null) {
@@ -59,6 +60,7 @@ public class CarrinhoService {
                     "PRODUTO_NAO_ENCONTRADO_PARA_ADD_CARRINHO",
                     HttpStatus.BAD_REQUEST);
         }
+         */
     }
 
     private Carrinho criarCarrinhoParaCliente(Long idCliente) {
