@@ -1,9 +1,6 @@
 package com.omupadev.comercioeletronico.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
@@ -12,6 +9,7 @@ import java.math.BigDecimal;
 public class Produto {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_produto")
     private Integer id;
 
