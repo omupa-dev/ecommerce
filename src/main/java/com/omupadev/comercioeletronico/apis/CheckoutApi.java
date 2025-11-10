@@ -17,7 +17,7 @@ public class CheckoutApi {
     }
 
     @PostMapping("/clientes/{idCliente}")
-    public void fecharCompra(@PathVariable Long idCliente) {
+    public void fecharCompra(@PathVariable Integer idCliente) {
         this.checkoutService.fecharCompra(idCliente);
     }
 }

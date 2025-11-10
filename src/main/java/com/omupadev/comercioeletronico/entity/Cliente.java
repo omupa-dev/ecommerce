@@ -1,16 +1,35 @@
 package com.omupadev.comercioeletronico.entity;
 
-public class Cliente extends Identificadora {
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "clientes")
+public class Cliente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cliente")
+    private Integer idCliente;
     private String nome;
     private String email;
     private String senha;
 
-    public Cliente(Long id, String nome, String email, String senha) {
-        super(id);
+    public Cliente() {
+    }
+
+    public Cliente(Integer idCliente, String nome, String email, String senha) {
+        this.idCliente = idCliente;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+    }
+
+    public Integer getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(Integer idCliente) {
+        this.idCliente = idCliente;
     }
 
     public String getNome() {
@@ -40,7 +59,8 @@ public class Cliente extends Identificadora {
     @Override
     public String toString() {
         return "Cliente{" +
-                "nome='" + nome + '\'' +
+                "id=" + idCliente +
+                ", nome='" + nome + '\'' +
                 ", email='" + email + '\'' +
                 ", senha='" + senha + '\'' +
                 '}';

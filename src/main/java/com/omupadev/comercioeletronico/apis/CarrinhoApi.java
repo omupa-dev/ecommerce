@@ -1,7 +1,6 @@
 package com.omupadev.comercioeletronico.apis;
 
-import com.omupadev.comercioeletronico.entity.Carrinho;
-import com.omupadev.comercioeletronico.entity.Produto;
+import com.omupadev.comercioeletronico.dto.CarrinhoDto;
 import com.omupadev.comercioeletronico.service.CarrinhoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,30 +19,31 @@ public class CarrinhoApi {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Set<Carrinho> listarTodos() {
+    public Set<CarrinhoDto> listarTodos() {
         return carrinhoService.listarTodos();
     }
 
-    @GetMapping("/{idCliente}")
+    @GetMapping("cliente/{idCliente}")
     @ResponseStatus(HttpStatus.OK)
-    public Carrinho consultarCarrinho(@PathVariable Long idCliente) {
+    public CarrinhoDto consultarCarrinho(@PathVariable Integer idCliente) {
         return carrinhoService.consultarCarrinho(idCliente);
     }
 
-    @PostMapping("/{idCliente}")
+    @PostMapping("cliente/{idCliente}/produto/{idProduto}/quantidade/{qtdProduto}")
     public void adicionarNoCarrinho(
-            @PathVariable Long idCliente,
-            @RequestBody Produto produto
+            @PathVariable Integer idCliente,
+            @PathVariable Integer idProduto,
+            @PathVariable Integer qtdProduto
     ) {
-        carrinhoService.adicionarNoCarrinho(idCliente, produto);
+        carrinhoService.adicionarNoCarrinho(idCliente, idProduto, qtdProduto);
     }
 
-    @DeleteMapping("/{idCliente}/produtos/{idProduto}")
+    @DeleteMapping("{idCarrinho}/produtos/{idProduto}")
     @ResponseStatus(HttpStatus.OK)
     public void removerDoCarrinho(
-            @PathVariable Long idCliente,
-            @PathVariable String idProduto
+            @PathVariable Integer idCarrinho,
+            @PathVariable Integer idProduto
     ) {
-        carrinhoService.removerDoCarrinho(idCliente, idProduto);
+        carrinhoService.removerDoCarrinho(idCarrinho, idProduto);
     }
 }

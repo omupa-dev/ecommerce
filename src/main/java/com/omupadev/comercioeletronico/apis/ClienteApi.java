@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-
 @RestController
 @RequestMapping("/clientes")
 public class ClienteApi {
@@ -26,14 +24,14 @@ public class ClienteApi {
     public void inserir(@RequestBody Cliente cliente) {
         logger.info("Inserindo cliente");
         logger.debug("Inserindo cliente={}", cliente);
-        clienteRepository.inserir(cliente);
+        clienteRepository.save(cliente);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Set<Cliente> listarTodos() {
+    public Iterable<Cliente> listarTodos() {
         logger.info("Listando clientes");
-        return clienteRepository.listarTodos();
+        return clienteRepository.findAll();
     }
 
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnvioService {
 
-    public void enviarProdutos(Long idCarrinho) {
+    public void enviarProdutos(Integer idCarrinho) {
         // TODO: Comunicar com transportadora
     }
 }

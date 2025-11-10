@@ -8,7 +8,7 @@ import java.util.UUID;
 @Service
 public class PagamentoService {
 
-    public String solicitarPagamento(BigDecimal valorACobrar, Long idCliente) {
+    public String solicitarPagamento(BigDecimal valorACobrar, Integer idCliente) {
         String idDoPagamento = UUID.randomUUID().toString();
         return idDoPagamento;
     }

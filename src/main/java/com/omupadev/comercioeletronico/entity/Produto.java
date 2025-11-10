@@ -11,7 +11,7 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_produto")
-    private Integer id;
+    private Integer idProduto;
 
     private String titulo;
     private String descricao;
@@ -23,20 +23,20 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(Integer id, String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
-        this.id = id;
+    public Produto(Integer idProduto, String titulo, String descricao, BigDecimal preco, Integer qtdEstoque) {
+        this.idProduto = idProduto;
         this.titulo = titulo;
         this.descricao = descricao;
         this.preco = preco;
         this.qtdEstoque = qtdEstoque;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdProduto() {
+        return idProduto;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdProduto(Integer idProduto) {
+        this.idProduto = idProduto;
     }
 
     public String getTitulo() {
@@ -74,7 +74,7 @@ public class Produto {
     @Override
     public String toString() {
         return "Produto{" +
-                "id='" + id + '\'' +
+                "id='" + idProduto + '\'' +
                 ", titulo='" + titulo + '\'' +
                 ", descricao='" + descricao + '\'' +
                 ", preco=" + preco +

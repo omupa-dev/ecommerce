@@ -1,29 +1,48 @@
 package com.omupadev.comercioeletronico.entity;
 
-import java.util.HashSet;
-import java.util.Random;
+import jakarta.persistence.*;
+
 import java.util.Set;
 
-public class Carrinho extends Identificadora {
+@Entity
+@Table(name = "carrinhos")
+public class Carrinho {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_carrinho")
+    private Integer idCarrinho;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
     private Cliente cliente;
-    private Set<Produto> produtos = new HashSet<>();
+
+    @OneToMany
+    @JoinColumn(name = "id_carrinho")
+    private Set<ProdutoCarrinho> produtos;
+
+    public Carrinho() {
+    }
 
     public Carrinho(Cliente cliente) {
-        super(new Random().nextLong());
         this.cliente = cliente;
     }
 
-    public void adicionarProduto(Produto produto) {
-        produtos.add(produto);
+    public Carrinho(Integer idCarrinho, Cliente cliente) {
+        this.idCarrinho = idCarrinho;
+        this.cliente = cliente;
     }
 
-    public Boolean ehDoCliente(Long idCliente) {
-        return cliente.getId().equals(idCliente);
+    public Boolean ehDoCliente(Integer idCliente) {
+        return cliente.getIdCliente().equals(idCliente);
     }
 
-    public void limparCarrinho() {
-        this.produtos = new HashSet<>();
+    public Integer getIdCarrinho() {
+        return idCarrinho;
+    }
+
+    public void setIdCarrinho(Integer idCarrinho) {
+        this.idCarrinho = idCarrinho;
     }
 
     public Cliente getCliente() {
@@ -34,15 +53,11 @@ public class Carrinho extends Identificadora {
         this.cliente = cliente;
     }
 
-    public Set<Produto> getProdutos() {
+    public Set<ProdutoCarrinho> getProdutos() {
         return produtos;
     }
 
-    @Override
-    public String toString() {
-        return "Carrinho{" +
-                ", cliente=" + cliente +
-                ", produtos=" + produtos +
-                '}';
+    public void setProdutos(Set<ProdutoCarrinho> produtos) {
+        this.produtos = produtos;
     }
 }

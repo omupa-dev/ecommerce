@@ -1,55 +1,71 @@
 package com.omupadev.comercioeletronico.service;
 
-import com.omupadev.comercioeletronico.entity.Carrinho;
+import com.omupadev.comercioeletronico.dto.CarrinhoDto;
 import com.omupadev.comercioeletronico.exception.ApplicationException;
-import com.omupadev.comercioeletronico.repository.EstoqueRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Service
 public class CheckoutService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final CarrinhoService carrinhoService;
     private final PagamentoService pagamentoService;
-    private final EstoqueRepository estoqueRepository;
     private final EnvioService envioService;
+    private final ProdutoService produtoService;
 
     public CheckoutService(
             CarrinhoService carrinhoService,
             PagamentoService pagamentoService,
-            EstoqueRepository estoqueRepository, EnvioService envioService) {
+            EnvioService envioService, ProdutoService produtoService) {
         this.carrinhoService = carrinhoService;
         this.pagamentoService = pagamentoService;
-        this.estoqueRepository = estoqueRepository;
         this.envioService = envioService;
+        this.produtoService = produtoService;
     }
 
-    public void fecharCompra(Long idCliente) {
-        final Carrinho carrinho = this.carrinhoService.consultarCarrinho(idCliente);
-        this.validaExistenciaProdutosNoCarrinho(idCliente, carrinho);
+    @Transactional
+    public void fecharCompra(Integer idCliente) {
+        try {
+            final CarrinhoDto carrinho = this.carrinhoService.consultarCarrinho(idCliente);
+            this.validaExistenciaProdutosNoCarrinho(idCliente, carrinho);
+            validarQuantidadeDeCadaProdutoDisponivel(idCliente, carrinho);
 
-        final BigDecimal valorTotal = this.carrinhoService.valorTotalCarrinho(idCliente);
-        final String idDoPagamento = this.pagamentoService.solicitarPagamento(valorTotal, idCliente);
+            final BigDecimal valorTotal = this.carrinhoService.valorTotalCarrinho(carrinho.idCarrinho());
+            final String idDoPagamento = this.pagamentoService.solicitarPagamento(valorTotal, idCliente);
 
-        if (!this.pagamentoService.verificarPagamento(idDoPagamento)) {
-            throw new ApplicationException(
-                    "Erro no pagamento de id=" + idDoPagamento,
-                    "ERRO_PAGAMENTO",
-                    HttpStatus.PRECONDITION_FAILED);
+            if (!this.pagamentoService.verificarPagamento(idDoPagamento)) {
+                throw new ApplicationException(
+                        "Erro no pagamento de id=" + idDoPagamento,
+                        "ERRO_PAGAMENTO",
+                        HttpStatus.PRECONDITION_FAILED);
+            }
+
+            produtoService.darBaixaQtdProdutosVendidos(carrinho.produtos());
+            this.envioService.enviarProdutos(carrinho.idCarrinho());
+            carrinhoService.limparCarrinho(carrinho.idCarrinho());
+        } catch (Exception e) {
+            logger.error("Erro fecharCompra idCliente={} errMsg={}", idCliente, e.getMessage());
+            throw e;
         }
-        this.estoqueRepository.darBaixaNosProdutos(carrinho.getProdutos());
-        this.envioService.enviarProdutos(carrinho.getId());
-        carrinho.limparCarrinho();
     }
 
-    private void validaExistenciaProdutosNoCarrinho(Long idCliente, Carrinho carrinho) {
-        if (carrinho == null || carrinho.getProdutos().isEmpty()) {
+    private void validaExistenciaProdutosNoCarrinho(Integer idCliente, CarrinhoDto carrinho) {
+        if (carrinho == null || carrinho.produtos().isEmpty()) {
             throw new ApplicationException(
                     "Erro no pagamento carrinho vazio idCliente=" + idCliente,
                     "ERRO_CARRINHO_VAZIO",
                     HttpStatus.PRECONDITION_FAILED);
         }
+    }
+
+    private void validarQuantidadeDeCadaProdutoDisponivel(Integer idCliente, CarrinhoDto carrinho) {
+        // TODO: tarefa de casa
     }
 }

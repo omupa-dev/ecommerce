@@ -1,93 +1,131 @@
 package com.omupadev.comercioeletronico.service;
 
+import com.omupadev.comercioeletronico.dto.CarrinhoDto;
 import com.omupadev.comercioeletronico.entity.Carrinho;
 import com.omupadev.comercioeletronico.entity.Cliente;
 import com.omupadev.comercioeletronico.entity.Produto;
+import com.omupadev.comercioeletronico.entity.ProdutoCarrinho;
 import com.omupadev.comercioeletronico.exception.ApplicationException;
+import com.omupadev.comercioeletronico.exception.ProdutoNaoEncontradoException;
 import com.omupadev.comercioeletronico.repository.CarrinhoRepository;
 import com.omupadev.comercioeletronico.repository.ClienteRepository;
-import com.omupadev.comercioeletronico.repository.EstoqueRepository;
+import com.omupadev.comercioeletronico.repository.ProdutoCarrinhoRepository;
+import com.omupadev.comercioeletronico.repository.ProdutoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
 public class CarrinhoService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final ClienteRepository clienteRepository;
     private final CarrinhoRepository carrinhoRepository;
-    private final EstoqueRepository estoqueRepository;
+    private final ProdutoRepository produtoRepository;
+    private final ProdutoCarrinhoRepository produtoCarrinhoRepository;
 
     public CarrinhoService(
             ClienteRepository clienteRepository,
             CarrinhoRepository carrinhoRepository,
-            EstoqueRepository estoqueRepository
+            ProdutoRepository produtoRepository,
+            ProdutoCarrinhoRepository produtoCarrinhoRepository
     ) {
         this.clienteRepository = clienteRepository;
         this.carrinhoRepository = carrinhoRepository;
-        this.estoqueRepository = estoqueRepository;
+        this.produtoRepository = produtoRepository;
+        this.produtoCarrinhoRepository = produtoCarrinhoRepository;
     }
 
-    public Set<Carrinho> listarTodos() {
-        return carrinhoRepository.listarTodos();
+    public Set<CarrinhoDto> listarTodos() {
+        Set<CarrinhoDto> carrinhos = new HashSet<>();
+
+        carrinhoRepository.findAll()
+                .forEach(encontrados ->
+                        carrinhos.add(new CarrinhoDto(
+                                encontrados.getIdCarrinho(),
+                                encontrados.getProdutos())
+                        ));
+
+        return carrinhos;
     }
 
-    public Carrinho consultarCarrinho(Long idCliente) {
-        return carrinhoRepository.consultarCarrinhoPorIdCliente(idCliente);
+    public CarrinhoDto consultarCarrinho(Integer idCliente) {
+        Carrinho carrinhoEncontrado = carrinhoRepository.findByClienteIdCliente(idCliente);
+
+        return new CarrinhoDto(
+                carrinhoEncontrado.getIdCarrinho(),
+                carrinhoEncontrado.getProdutos());
     }
 
-    public void adicionarNoCarrinho(Long idCliente, Produto produto) {
-        validarExistenciaDoProduto(produto);
+    public void adicionarNoCarrinho(Integer idCliente, Integer idProduto, Integer qtdProduto) {
+        Produto produtoEncontrado = produtoRepository.findById(idProduto)
+                .orElseThrow(() -> new ProdutoNaoEncontradoException(
+                        "Produto não encontrado com id=" + idProduto,
+                        "PRODUTO_NAO_ENCONTRADO")
+                );
 
-        Carrinho carrinhoDoCliente = carrinhoRepository.consultarCarrinhoPorIdCliente(idCliente);
+        Carrinho carrinhoDoCliente = carrinhoRepository.findByClienteIdCliente(idCliente);
         if (carrinhoDoCliente == null) {
             carrinhoDoCliente = criarCarrinhoParaCliente(idCliente);
         }
 
-        carrinhoDoCliente.adicionarProduto(produto);
-        carrinhoRepository.adicionar(carrinhoDoCliente);
+        var produtoCarrinho = new ProdutoCarrinho(
+                carrinhoDoCliente.getIdCarrinho(),
+                produtoEncontrado,
+                qtdProduto
+        );
+
+        produtoCarrinhoRepository.save(produtoCarrinho);
     }
 
-    private void validarExistenciaDoProduto(Produto produto) {
-        /*
-        Produto produtoEncontrado = estoqueRepository.consultarEstoque(produto.getId());
+    private Carrinho criarCarrinhoParaCliente(Integer idCliente) {
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new ApplicationException(
+                        "Cliente não encontrado para o id=" + idCliente,
+                        "CLIENTE_NAO_ENCONTRADO",
+                        HttpStatus.NOT_FOUND));
 
-        if (produtoEncontrado == null) {
-            throw new ApplicationException(
-                    "Produto encontrado com o id=" + produto.getId(),
-                    "PRODUTO_NAO_ENCONTRADO_PARA_ADD_CARRINHO",
-                    HttpStatus.BAD_REQUEST);
+        var carrinhoCriado = new Carrinho(cliente);
+        return carrinhoRepository.save(carrinhoCriado);
+    }
+
+    @Transactional
+    public void removerDoCarrinho(Integer idCarrinho, Integer idProduto) {
+        try {
+            logger.info("Removendo do carrinho {} o produto {}", idCarrinho, idProduto);
+            produtoCarrinhoRepository.deleteByProdutoAndCarrinho(idProduto, idCarrinho);
+        } catch (Exception e) {
+            logger.error("Erro ao remover do carrinho {} o produto {} errMsg={}", idCarrinho, idProduto, e.getMessage());
+            throw e;
         }
-         */
     }
 
-    private Carrinho criarCarrinhoParaCliente(Long idCliente) {
-        Cliente cliente = clienteRepository.consultarPorId(idCliente);
-
-        if (cliente == null) {
-            throw new ApplicationException(
-                    "Cliente não encontrado para o id=" + idCliente,
-                    "CLIENTE_NAO_ENCONTRADO",
-                    HttpStatus.NOT_FOUND);
+    public BigDecimal valorTotalCarrinho(Integer idCarrinho) {
+        try {
+            logger.info("Consultando valor total do idCarrinho={}", idCarrinho);
+            BigDecimal valorTotal = produtoCarrinhoRepository.valorTotalDoCarrinho(idCarrinho);
+            logger.info("Valor total do idCarrinho={} total={}", idCarrinho, valorTotal);
+            return valorTotal;
+        } catch (Exception e) {
+            logger.error("Erro ao consultar valor total do idCarrinho={} errMsg={}", idCarrinho, e.getMessage());
+            throw e;
         }
-
-        return new Carrinho(cliente);
     }
 
-    public void removerDoCarrinho(Long idCliente, String idProduto) {
-        carrinhoRepository.removerDoCarrinho(idCliente, idProduto);
-    }
-
-    public BigDecimal valorTotalCarrinho(Long idCliente) {
-        Carrinho carrinho = this.consultarCarrinho(idCliente);
-        BigDecimal valorTotal = BigDecimal.ZERO;
-
-        for (Produto produto : carrinho.getProdutos()) {
-            valorTotal = valorTotal.add(produto.getPreco());
+    public void limparCarrinho(Integer idCarrinho) {
+        try {
+            logger.info("Limpando o idCarrinho={}", idCarrinho);
+            produtoCarrinhoRepository.deleteByIdCarrinho(idCarrinho);
+        } catch (Exception e) {
+            logger.error("Erro ao limpar o idCarrinho={}", idCarrinho);
+            throw e;
         }
-
-        return valorTotal;
     }
 }
