@@ -122,6 +122,11 @@ public class CarrinhoService {
     public void limparCarrinho(Integer idCarrinho) {
         try {
             logger.info("Limpando o idCarrinho={}", idCarrinho);
+            
+            if (idCarrinho == null) {
+                throw new RuntimeException("O campo idCarrinho não pode ser nulo");
+            }
+            
             produtoCarrinhoRepository.deleteByIdCarrinho(idCarrinho);
         } catch (Exception e) {
             logger.error("Erro ao limpar o idCarrinho={}", idCarrinho);
